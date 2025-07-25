@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplicación Mania</title>
+    <!-- Carga de Tailwind CSS para estilos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Fuentes personalizadas para una apariencia de juego */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Press+Start+2P&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); /* Fondo degradado vibrante */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Estilos para el contenedor principal del juego */
+        .game-container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            border: 5px solid #ffcc00; /* Borde amarillo brillante */
+            position: relative;
+            overflow: hidden; /* Para contener animaciones futuras */
+        }
+
+        /* Título del juego */
+        .game-title {
+            font-family: 'Press Start 2P', cursive; /* Fuente pixelada para el título */
+            color: #4a007a;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 0 #ffcc00; /* Sombra para efecto 3D */
+            line-height: 1.2;
+        }
+
+        /* Estilo para el personaje del juego (emoji) */
+        .game-character {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite ease-in-out; /* Animación de rebote */
+        }
+
+        /* Animación de rebote */
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Estilo para el área de la pregunta */
+        .question-area {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 25px;
+            background-color: #e0f2f7;
+            padding: 15px 25px;
+            border-radius: 15px;
+            border: 2px dashed #00bcd4;
+            display: inline-block; /* Para que el padding y border se apliquen correctamente */
+        }
+
+        /* Estilo para el campo de entrada */
+        .answer-input {
+            padding: 12px 20px;
+            font-size: 1.8rem;
+            text-align: center;
+            border: 3px solid #00bcd4;
+            border-radius: 12px;
+            width: calc(100% - 40px); /* Ajuste para padding */
+            max-width: 200px;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s ease;
+        }
+
+        .answer-input:focus {
+            outline: none;
+            border-color: #ff5722; /* Color de enfoque */
+        }
+
+        /* Estilo para los botones */
+        .game-button {
+            background-color: #4CAF50; /* Verde */
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            margin: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-button:hover {
+            background-color: #45a049; /* Verde más oscuro al pasar el ratón */
+            transform: translateY(-3px); /* Efecto de elevación */
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-button:active {
+            transform: translateY(0); /* Efecto de "presionado" */
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Efecto de brillo en el botón */
+        .game-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.4s ease;
+            transform: skewX(-20deg);
+        }
+
+        .game-button:hover::after {
+            left: 100%;
+        }
+
+        /* Colores específicos para botones */
+        #start-button { background-color: #2196F3; } /* Azul */
+        #start-button:hover { background-color: #1976D2; }
+
+        #check-button { background-color: #FF9800; } /* Naranja */
+        #check-button:hover { background-color: #FB8C00; }
+
+        #next-button { background-color: #8BC34A; } /* Verde claro */
+        #next-button:hover { background-color: #7CB342; }
+
+        /* Área de retroalimentación */
+        .feedback-area {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 20px;
+            min-height: 40px; /* Para evitar saltos de diseño */
+        }
+
+        .feedback-correct {
+            color: #4CAF50; /* Verde */
+        }
+
+        .feedback-incorrect {
+            color: #F44336; /* Rojo */
+        }
+
+        /* Área de puntuación */
+        .score-area {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #673AB7; /* Morado */
+            margin-top: 20px;
+            background-color: #ede7f6;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 2px solid #5e35b1;
+        }
+
+        /* Estilos para el modal de mensaje (en lugar de alert()) */
+        .message-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .message-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            max-width: 400px;
+            width: 90%;
+            border: 4px solid #FFC107; /* Borde amarillo */
+        }
+
+        .modal-content h3 {
+            font-size: 2rem;
+            color: #3F51B5;
+            margin-bottom: 15px;
+        }
+
+        .modal-content p {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 25px;
+        }
+
+        .modal-close-button {
+            background-color: #FF5722;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-close-button:hover {
+            background-color: #E64A19;
+        }
+
+        /* Responsividad para pantallas pequeñas */
+        @media (max-width: 600px) {
+            .game-title {
+                font-size: 1.8rem;
+            }
+            .game-character {
+                font-size: 3rem;
+            }
+            .question-area {
+                font-size: 2.2rem;
+                padding: 10px 15px;
+            }
+            .answer-input {
+                font-size: 1.5rem;
+                padding: 10px 15px;
+            }
+            .game-button {
+                padding: 12px 20px;
+                font-size: 1.2rem;
+            }
+            .feedback-area {
+                font-size: 1.2rem;
+            }
+            .score-area {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1 class="game-title">Multiplicación Mania</h1>
+        <div class="game-character" id="game-character">✨</div>
+
+        <div id="game-start-screen">
+            <p class="text-lg text-gray-700 mb-6">¡Bienvenido a Multiplicación Mania! Practica tus tablas de multiplicar de una cifra.</p>
+            <button id="start-button" class="game-button">Empezar Juego</button>
+        </div>
+
+        <div id="game-play-screen" class="hidden">
+            <div class="question-area" id="question"></div>
+            <input type="number" id="answer-input" class="answer-input" placeholder="Tu respuesta" autofocus>
+            <div class="flex justify-center flex-wrap">
+                <button id="check-button" class="game-button">Comprobar</button>
+                <button id="next-button" class="game-button hidden">Siguiente Pregunta</button>
+            </div>
+            <div id="feedback" class="feedback-area"></div>
+            <div id="score" class="score-area">Puntuación: 0</div>
+        </div>
+    </div>
+
+    <!-- Modal de mensaje personalizado -->
+    <div id="message-modal" class="message-modal">
+        <div class="modal-content">
+            <h3 id="modal-title"></h3>
+            <p id="modal-message"></p>
+            <button id="modal-close-button" class="modal-close-button">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        // Obtener referencias a los elementos del DOM
+        const gameStartScreen = document.getElementById('game-start-screen');
+        const gamePlayScreen = document.getElementById('game-play-screen');
+        const startButton = document.getElementById('start-button');
+        const questionElement = document.getElementById('question');
+        const answerInput = document.getElementById('answer-input');
+        const checkButton = document.getElementById('check-button');
+        const nextButton = document.getElementById('next-button');
+        const feedbackElement = document.getElementById('feedback');
+        const scoreElement = document.getElementById('score');
+        const gameCharacter = document.getElementById('game-character');
+
+        // Modal de mensaje
+        const messageModal = document.getElementById('message-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const modalCloseButton = document.getElementById('modal-close-button');
+
+        // Variables del juego
+        let num1, num2, correctAnswer;
+        let score = 0;
+        let gameActive = false;
+
+        // Función para mostrar el modal de mensaje
+        function showMessageModal(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            messageModal.classList.add('show');
+        }
+
+        // Función para ocultar el modal de mensaje
+        function hideMessageModal() {
+            messageModal.classList.remove('show');
+        }
+
+        // Event listener para cerrar el modal
+        modalCloseButton.addEventListener('click', hideMessageModal);
+
+        // Función para generar una nueva pregunta
+        function generateQuestion() {
+            // Genera dos números aleatorios entre 1 y 9
+            num1 = Math.floor(Math.random() * 9) + 1;
+            num2 = Math.floor(Math.random() * 9) + 1;
+            correctAnswer = num1 * num2;
+
+            // Muestra la pregunta en el elemento correspondiente
+            questionElement.textContent = `${num1} × ${num2} = ?`;
+            answerInput.value = ''; // Limpia el campo de entrada
+            feedbackElement.textContent = ''; // Limpia el feedback
+            feedbackElement.className = 'feedback-area'; // Reinicia las clases de feedback
+            checkButton.classList.remove('hidden'); // Muestra el botón de comprobar
+            nextButton.classList.add('hidden'); // Oculta el botón de siguiente
+            answerInput.focus(); // Pone el foco en el campo de respuesta
+        }
+
+        // Función para actualizar la puntuación en la pantalla
+        function updateScore() {
+            scoreElement.textContent = `Puntuación: ${score}`;
+        }
+
+        // Función para iniciar el juego
+        function startGame() {
+            gameActive = true;
+            score = 0;
+            updateScore();
+            gameStartScreen.classList.add('hidden'); // Oculta la pantalla de inicio
+            gamePlayScreen.classList.remove('hidden'); // Muestra la pantalla de juego
+            generateQuestion(); // Genera la primera pregunta
+        }
+
+        // Función para comprobar la respuesta del usuario
+        function checkAnswer() {
+            if (!gameActive) return; // No hacer nada si el juego no está activo
+
+            const userAnswer = parseInt(answerInput.value);
+
+            // Validar que la entrada sea un número
+            if (isNaN(userAnswer)) {
+                showMessageModal('Error', 'Por favor, ingresa un número válido.');
+                return;
+            }
+
+            // Comprobar si la respuesta es correcta
+            if (userAnswer === correctAnswer) {
+                feedbackElement.textContent = '¡Correcto! 🎉';
+                feedbackElement.classList.add('feedback-correct');
+                score++; // Incrementa la puntuación
+                gameCharacter.textContent = '🥳'; // Cambia el emoji a feliz
+            } else {
+                feedbackElement.textContent = `Incorrecto. La respuesta correcta es ${correctAnswer}. 😔`;
+                feedbackElement.classList.add('feedback-incorrect');
+                gameCharacter.textContent = '😞'; // Cambia el emoji a triste
+            }
+
+            updateScore(); // Actualiza la puntuación en pantalla
+            checkButton.classList.add('hidden'); // Oculta el botón de comprobar
+            nextButton.classList.remove('hidden'); // Muestra el botón de siguiente
+        }
+
+        // Event Listeners
+        startButton.addEventListener('click', startGame);
+
+        checkButton.addEventListener('click', checkAnswer);
+
+        nextButton.addEventListener('click', () => {
+            gameCharacter.textContent = '✨'; // Restaura el emoji
+            generateQuestion(); // Genera la siguiente pregunta
+        });
+
+        // Permite comprobar la respuesta presionando Enter en el campo de entrada
+        answerInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                if (checkButton.classList.contains('hidden')) {
+                    // Si el botón de comprobar está oculto (ya se comprobó), pasa a la siguiente pregunta
+                    nextButton.click();
+                } else {
+                    // Si el botón de comprobar está visible, comprueba la respuesta
+                    checkButton.click();
+                }
+            }
+        });
+
+        // Inicializar la pantalla de puntuación al cargar la página
+        updateScore();
+    </script>
+</body>
+</html>
