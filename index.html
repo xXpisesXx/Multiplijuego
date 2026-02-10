@@ -143,31 +143,18 @@ td {
         <h1>Control de Cobros</h1>
         
         <div class="selector-section">
-            <label for="cliente-select">Seleccionar Cliente:</label>
+            <label for="cliente-select">Seleccionar Móvil:</label>
             <select id="cliente-select">
-                <option value="">-- Elige un cliente --</option>
+                <option value="">-- Elige un socio --</option>
             </select>
         </div>
 
         <div id="card-container">
-            <p class="placeholder">Selecciona un cliente de la lista superior para gestionar sus pagos.</p>
+            <p class="placeholder">Selecciona un socio de la lista superior para gestionar sus deudas.</p>
         </div>
     </div>
     <script src="movilesJson.js"></script>
     <script>
-/*const clientes = [
-    { id: 1, movil: "00", nombre: "Wilson Mamani Ojeda", tel: "59170000001", deudas: [{ concepto: "Factura Ene", monto: 150.00 }, { concepto: "Mantenimiento", monto: 45.00 }] },
-    { id: 2, movil: "01", nombre: "Pablo Siles", tel: "59174839540", deudas: [{ concepto: "Suscripción Anual", monto: 1200.00 }] },
-    { id: 3, movil: "02", nombre: "Héctor", tel: "59170000003", deudas: [{ concepto: "Repuestos", monto: 85.00 }] },
-    { id: 4, movil: "03", nombre: "Alberto Medina", tel: "59170000004", deudas: [{ concepto: "Servicio Técnico", monto: 300.00 }] },
-    { id: 5, movil: "04", nombre: "Juan Mamani", tel: "59170000005", deudas: [{ concepto: "Consultoría", monto: 500.00 }, { concepto: "Extras", monto: 50.00 }] },
-    { id: 6, movil: "06", nombre: "Irineo Paniagua", tel: "59170000006", deudas: [{ concepto: "Insumos", monto: 120.50 }] },
-    { id: 7, movil: "07", nombre: "Wilson Mamani Mamani", tel: "59170000007", deudas: [{ concepto: "Alquiler Equipos", monto: 900.00 }] },
-    { id: 8, movil: "09", nombre: "Rodrigo Fuentes", tel: "59170000008", deudas: [{ concepto: "Instalación", monto: 150.00 }] },
-    { id: 9, movil: "11", nombre: "Elvis Calle", tel: "59170000009", deudas: [{ concepto: "Seguro", monto: 80.00 }] },
-    { id: 10, movil: "12", nombre: "Manuel", tel: "59170000010", deudas: [{ concepto: "Saldo Anterior", monto: 210.00 }] }
-];*/
-
 const select = document.getElementById('cliente-select');
 const container = document.getElementById('card-container');
 
